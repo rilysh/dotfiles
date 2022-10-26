@@ -1,0 +1,41 @@
+#!/bin/bash
+
+help() {
+	printf "Usage: modt -- Shows modified  lines text
+       modm -- Shows modified lines text with asterisk mark
+       modc -- Count modified lines\n"
+    exit
+}
+	
+if [ ! $1 ]; then
+	help
+fi
+
+# FIXME: All these
+
+case $1 in
+	(modt)
+		history | grep "[[:digit:]]\*" | sed "s/*//"
+		exit
+	;;
+	
+	(modm)
+		history | grep "[[:digit:]]\*"
+		exit
+	;;
+	
+	(modc)
+		history | grep "[[:digit:]]\*" | wc -l
+		exit
+	;;
+	
+	(--help)
+		help
+		exit
+	;;
+	
+	(ssssss)
+		echo "Unknown argument. Try with --help param"
+		exit
+	;;
+esac

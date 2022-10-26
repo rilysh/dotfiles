@@ -1,0 +1,79 @@
+#!/bin/zsh
+# We need to use zsh as we're going to export the variables in .zshrc
+
+install_nvm() {
+	cp ~/.$(basename $SHELL)rc ~/.$(basename $SHELL)rc.backup
+	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | bash
+	export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+				
+	source ~/.$(basename $SHELL)rc
+}
+
+if [[ ! $1 || $1 == "--help" ]]; then
+	printf "Usage: install -- Install nvm, node and npm
+       uninstall -- Uninstall nvm, node and npm\n"
+	exit
+fi
+
+case $1 in
+	(install)
+		if [ -d "$HOME/.nvm" ]; then
+			vared -cp "nvm directory already exist, do you want to reinstall nvm? (warning: Your current installation will be purged) [y/n]" confirm
+			if [[ $confirm == "Y" || $confirm == "y" ]]; then
+				rm -rf "$HOME/.nvm"
+				install_nvm
+				# Check if nvm installed successfully
+				if [ ! nvm ]; then
+					echo "error: exported directory not found, please export nvm directory manually"
+					exit
+				else
+					nvm install node
+					source ~/.$(basename $SHELL)rc
+					exit
+				fi
+			elif [[ $confirm == "N" || $confirm == "n" ]]; then
+				echo "Alright."
+				exit
+			else
+				echo "wrong answer, only accept 'Y' for Yes, and 'N' for No"
+				exit
+			fi
+		else
+			install_nvm
+			# Check if nvm installed successfully
+			if [ ! nvm ]; then
+				echo "error: exported directory not found, please export nvm directory manually"
+				exit
+			else
+				nvm install node
+				source ~/.$(basename $SHELL)rc
+				exit
+			fi
+		fi
+	;;
+	
+	(uninstall)
+		if [ -d "$HOME/.nvm" ]; then
+			vared -cp "Are you sure, you want to uninstall nvm? (warning: It will remove all installed packages) [y/n]" confirm
+			if [[ $confirm == "Y" || $confirm == "y" ]]; then
+				rm -rf "$HOME/.nvm"
+				source ~/.$(basename $SHELL)rc
+			elif [[ $confirm == "N" || $confirm == "n" ]]; then
+				echo "Alright."
+				exit
+			else
+				echo "wrong answer, only accept 'Y' for Yes, and 'N' for No"
+				exit
+			fi
+		else
+			echo "nvm isn't installed yet"
+			exit
+		fi
+	;;
+	
+	(*)
+		echo "wrong command, type --help for more info"
+		exit
+	;;
+esac
