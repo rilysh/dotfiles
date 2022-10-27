@@ -10,8 +10,11 @@ pacman -S --noconfirm && pacman -Syu --noconfirm
 pacman -Scc --noconfirm # Cleanup previous cached files
 
 # Install several other utilities
-pacman -S --noconfirm catfish cmake geany gimp git ruby neofetch numlockx pavucontrol simplescreenrecorder rxvt-unicode tmux zip unzip p7zip zsh xclip
+pacman -S --noconfirm catfish cmake geany gimp git ruby neofetch numlockx pavucontrol simplescreenrecorder rxvt-unicode tmux zip unzip p7zip zsh xclip wine
 numlockx on
+
+# Install pulseaudio lib32 for wine
+pacman -S lib32-alsa-plugins lib32-libpulse lib32-openal 
 
 # Install yay
 git clone https://aur.archlinux.org/yay.git
